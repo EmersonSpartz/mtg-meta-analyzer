@@ -131,7 +131,7 @@
 
 		// Compute match-level curve (dashed gray, wider — normalized to same maxY so it appears shorter)
 		const mA = cell.wins + 1;
-		const mB = cell.losses + cell.draws + 1;
+		const mB = cell.losses + 1; // draws excluded — neither win nor loss
 		const mxs: number[] = [], mys: number[] = [];
 		for (let i = 0; i <= STEPS; i++) {
 			const x = xMin + ((xMax - xMin) * i) / STEPS;
@@ -301,10 +301,11 @@
 			<summary>Low-sample matchups ({sparse.length})</summary>
 			<div class="sparse-list">
 				{#each sparse as m}
-					{@const wr = m.cell.winrate ?? 0}
+					{@const gn = m.cell.gameWins + m.cell.gameLosses}
+					{@const wr = gn > 0 ? m.cell.gameWins / gn : (m.cell.winrate ?? 0)}
 					<span>
 						<a href="{base}/archetypes/{encodeURIComponent(m.opponent)}">{m.opponent}</a>
-						<span class="muted">{(wr * 100).toFixed(0)}% ({m.cell.wins}–{m.cell.losses}, n={m.cell.total})</span>
+						<span class="muted">{(wr * 100).toFixed(0)}% ({m.cell.gameWins}–{m.cell.gameLosses}, {gn}g / {m.cell.total}m)</span>
 					</span>
 				{/each}
 			</div>

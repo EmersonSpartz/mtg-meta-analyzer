@@ -176,13 +176,20 @@ export function buildMatchupMatrix(
 				const j = archIndex.get(arch2);
 				if (i === undefined || j === undefined) continue;
 
-				// Parse individual game scores — result is always winner-first (e.g. "2-1-0")
-				// regardless of player1/player2 order, so swap when player2 won.
+				// Parse individual game scores.
+				// Decisive matches: result is winner-first (e.g. "2-1-0"), so swap based on who won.
+				// Drawn matches (winnerId null): no winner-first convention — use parts literally.
 				const parts = match.result.split('-').map(Number);
-				const winnerGames = parts[0] ?? 0;
-				const loserGames = parts[1] ?? 0;
-				const p1Games = match.winnerId === match.player1Id ? winnerGames : loserGames;
-				const p2Games = match.winnerId === match.player2Id ? winnerGames : loserGames;
+				const p0 = isNaN(parts[0]) ? 0 : (parts[0] ?? 0);
+				const p1 = isNaN(parts[1]) ? 0 : (parts[1] ?? 0);
+				let p1Games: number, p2Games: number;
+				if (match.winnerId === match.player1Id) {
+					p1Games = p0; p2Games = p1; // p1 won — result is p1-games first
+				} else if (match.winnerId === match.player2Id) {
+					p1Games = p1; p2Games = p0; // p2 won — result is p2-games first, swap
+				} else {
+					p1Games = p0; p2Games = p1; // drawn — no winner convention, use as-is
+				}
 				cells[i][j].gameWins += p1Games;
 				cells[i][j].gameLosses += p2Games;
 				cells[j][i].gameWins += p2Games;
