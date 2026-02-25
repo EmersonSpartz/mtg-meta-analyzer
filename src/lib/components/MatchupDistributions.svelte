@@ -266,6 +266,28 @@
 {#if sorted.length === 0}
 	<p class="empty">No matchups with enough data (minimum {MIN_MATCHES} matches).</p>
 {:else}
+	<details class="how-to-read">
+		<summary>How to read these charts</summary>
+		<div class="how-to-read-body">
+			<p>
+				Each card shows one matchup. The <strong>curve</strong> is a probability distribution —
+				it represents where this deck's true win rate against that opponent probably falls,
+				given the data we have. The peak is the best estimate; the width shows uncertainty.
+			</p>
+			<p>
+				<strong>Narrow</strong> means we're confident — lots of matches played.
+				<strong>Wide</strong> means we're not sure yet — only a few matches in the data.
+				A wide curve crossing 50% means we genuinely can't tell if this matchup is favored or not.
+			</p>
+			<p>
+				<strong style="color:#16a34a">Green</strong> = this deck wins more often than not.
+				<strong style="color:#dc2626">Red</strong> = it loses more often than not.
+				<strong style="color:#6b7280">Gray</strong> = too close to call.
+				The vertical line marks 50%.
+			</p>
+		</div>
+	</details>
+
 	<div class="sort-bar">
 		<span class="sort-label">Sort:</span>
 		<button class="sort-btn" class:active={sortBy === 'winrate'} onclick={() => (sortBy = 'winrate')}>Win rate</button>
@@ -345,6 +367,40 @@
 {/if}
 
 <style>
+	.how-to-read {
+		font-size: 0.75rem;
+		color: var(--color-text-muted);
+		margin-bottom: 0.75rem;
+	}
+
+	.how-to-read summary {
+		cursor: pointer;
+		color: var(--color-text-muted);
+		font-style: italic;
+		user-select: none;
+	}
+
+	.how-to-read summary:hover {
+		color: var(--color-accent);
+	}
+
+	.how-to-read-body {
+		margin-top: 0.5rem;
+		display: flex;
+		flex-direction: column;
+		gap: 0.4rem;
+		line-height: 1.6;
+		padding: 0.6rem 0.75rem;
+		background: var(--color-surface);
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius);
+		max-width: 56ch;
+	}
+
+	.how-to-read-body p {
+		margin: 0;
+	}
+
 	.sort-bar {
 		display: flex;
 		align-items: center;
